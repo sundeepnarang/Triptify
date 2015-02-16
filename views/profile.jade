@@ -1,0 +1,29 @@
+//
+   Created by Sundeep on 2/15/2015.
+
+doctype html
+html
+    head
+        title Node Authentication
+        link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css')
+        link(rel='stylesheet', href='//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css')
+    body
+        .container
+            .page-header.text-center
+                h1
+                    span.fa.fa-anchor Profile Page
+                a.btn.btn-default.btn-sm(href='/logout') Logout
+            .row
+                // LOCAL INFORMATION
+                .col-sm-12
+                    .well
+                        h3.text-center
+                            span.fa.fa-user   Local
+
+                        if user.local.email
+                            p
+                                strong ID - #{user._id}
+                                br
+                                strong Email - #{user.local.email}
+                                br
+                                strong Password - #{user.local.password}

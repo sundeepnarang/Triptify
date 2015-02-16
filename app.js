@@ -4,11 +4,23 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session      = require('express-session');
+var passport = require('passport');
+var sessionStore = new session.MemoryStore();
+
+var mongoose = require('mongoose');
+var flash    = require('connect-flash');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+
+var configDB = require('./config/database.js');
+
+// configuration ===============================================================
+// connect to our database
+mongoose.connect(configDB.url);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -21,6 +33,21 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/lib',express.static(__dirname + '/bower_components'));
+
+app.use(session({
+    secret: 'a76d5e6c54e054ddc268e719dd59e5817ffe49e2c83b6fb8feffcbc07618c4b8'
+    , name : 'triptify'
+    , store : sessionStore
+    , resave : false
+    , saveUninitialized : false
+    , cookie : {
+        maxAge : 86400000
+    }
+})); // session secret
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+app.use(flash());
 
 app.use('/', routes);
 app.use('/users', users);
