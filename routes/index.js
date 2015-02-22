@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var passport = require('../library/routesLib').passport;
+var lib = require('../library/routesLib')
+var passport = lib.passport;
 // route middleware to ensure user is logged in
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated())
@@ -13,14 +14,22 @@ function isLoggedIn(req, res, next) {
 
 // show the home page (will also have our login links)
 router.get('/', function(req, res) {
-    res.render('index');
+    res.render('index',{'title':'Welcome'});
 });
 
 // PROFILE SECTION =========================
-router.get('/profile', isLoggedIn, function(req, res) {
-    res.render('profile', {
-        user : req.user
+router.get('/home', isLoggedIn, function(req, res) {
+    lib.setId(req.sessionID,function(){
+        res.render('home', {'title':'Home'});
     });
+
+});
+
+router.post('/search', isLoggedIn, function(req, res) {
+    lib.search(req.sessionID,req.body,req.ip,req.get('user-agent'),function(hotel){
+        res.render('home', {'title':'Home',hotel:hotel});
+    });
+
 });
 
 // LOGOUT ==============================
@@ -37,12 +46,12 @@ router.get('/logout', function(req, res) {
 // LOGIN ===============================
 // show the login form
 router.get('/login', function(req, res) {
-    res.render('login', { message: req.flash('loginMessage') });
+    res.render('login', {title:'Login', message: req.flash('loginMessage') });
 });
 
 // process the login form
 router.post('/login', passport.authenticate('local-login', {
-    successRedirect : '/profile', // redirect to the secure profile section
+    successRedirect : '/home', // redirect to the secure profile section
     failureRedirect : '/login', // redirect back to the signup page if there is an error
     failureFlash : true // allow flash messages
 }));
@@ -50,7 +59,7 @@ router.post('/login', passport.authenticate('local-login', {
 // SIGNUP =================================
 // show the signup form
 router.get('/signup', function(req, res) {
-    res.render('signup', { message: req.flash('signupMessage') });
+    res.render('signup', { title:'Signup', message: req.flash('signupMessage') });
 });
 
 // process the signup form

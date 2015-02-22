@@ -1,0 +1,20 @@
+{
+  "name": "triptify",
+  "version": "0.0.1",
+  "private": true,
+  "homepage": "https://github.com/sundeepnarang/Triptify",
+  "authors": [
+    "Sundeep Narang <sundeepnrng@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "3.3.2"
+  }
+}

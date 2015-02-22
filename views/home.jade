@@ -1,0 +1,27 @@
+//
+   Created by Sundeep on 2/22/2015.
+
+extends layout
+block content
+    .page-header
+        h1 Welcome to Triptify
+    .row
+        .col-md-6
+            form.form-horizontal(action='/search', method='POST')
+                .form-group
+                    label(for="city") City
+                    input(type="text", class="form-control", id="city", name='city', placeholder='Enter City Name')
+                .form-group
+                    label(for="state") State
+                    input(type="text", class="form-control", id="state", name='state', placeholder='Enter State Code')
+                .form-group
+                    label(for="arrival") Arrival Date
+                    input(type="date", class="form-control", id="arrival", name='arrival')
+                .form-group
+                    label(for="departure") Departure Date
+                    input(type="date", class="form-control", id="departure", name='departure')
+                button(type="submit" class="btn btn-default") Go!
+    if hotel
+        each val in hotel
+            p #{val}
+            br
