@@ -1,0 +1,27 @@
+//
+   Created by Sundeep on 3/15/2015.
+
+extends layout
+
+block content
+    table.table.table-striped
+        thead
+            tr
+                th Hotel Id
+                th Link
+                th Picture
+                th Name
+                th Rating
+                th Price
+        tbody
+            if(data)
+                each val in data
+                    tr
+                        td #{val.hotelId}
+                        td
+                            a(href="#{val.link}") Book
+                        td
+                            img(width=64, src="#{val.picture}")
+                        td #{val.name}
+                        td #{val.rating}
+                        td #{val.price}

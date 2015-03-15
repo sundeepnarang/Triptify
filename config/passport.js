@@ -102,7 +102,7 @@ module.exports = function(passport) {
 
                             newUser.local.email    = email;
                             newUser.local.password = newUser.generateHash(password);
-
+                            newUser.local.ExtId = newUser.generateExtId();
                             newUser.save(function(err) {
                                 if (err)
                                     return done(err);
