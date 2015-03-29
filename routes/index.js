@@ -3,7 +3,10 @@ var router = express.Router();
 var lib = require('../library/routesLib')
 var passport = lib.passport;
 var data = {};
+var flights = {};
+var region  = {};
 var User       = require('../models/user');
+var util        = require('util');
 // route middleware to ensure user is logged in
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated())
@@ -50,7 +53,7 @@ router.get('/login', function(req, res) {
 
 // process the login form
 router.post('/login', passport.authenticate('local-login', {
-    successRedirect : '/home', // redirect to the secure profile section
+    successRedirect : '/list', // redirect to the secure profile section
     failureRedirect : '/login', // redirect back to the signup page if there is an error
     failureFlash : true // allow flash messages
 }));
@@ -202,12 +205,45 @@ router.get('/unlink/google', isLoggedIn, function(req, res) {
 
 //extension
 
-router.post('/save',function(req,res){
+router.post('/saveh',function(req,res){
     var id = req.body.id;
     if(!data[id]){
-        data[id] = [];
+        data[id] = {};
     }
-    data[id].push(req.body.data);
+    var urlObject = req.body.urlData;
+    var tripId = urlObject.regionId + "|" + urlObject.startDate + "|" + urlObject.endDate ;
+    if(!data[id][tripId]){
+        data[id][tripId] = {};
+    }
+   // var regex = new RegExp("+", "g");
+    region[urlObject.regionId] = urlObject.destination.replace(/\+/g," ");
+
+    data[id][tripId][req.body.data.hotelId] = req.body.data;
+    console.log("Data : \n\n",util.inspect(data));
+    console.log("\n\nRegion : \n\n",util.inspect(region));
+    res.send(true);
+});
+
+router.post('/savef',function(req,res){
+    var id = req.body.id;
+    if(!flights[id]){
+        flights[id] = {};
+    }
+    var urlObject = req.body.urlData;
+    var tripId;
+    if(!urlObject.leg){
+        tripId = urlObject.leg1;
+    }else{
+        tripId = urlObject["leg"+(parseInt(urlObject.leg)+1)];
+    }
+    if(!flights[id][tripId]){
+        flights[id][tripId] = [];
+    }
+    // var regex = new RegExp("+", "g");
+
+    flights[id][tripId].push(req.body.data);
+    console.log("Data : \n\n",util.inspect(flights));
+    console.log("\n\nRegion : \n\n",util.inspect(region));
     res.send(true);
 });
 
@@ -235,7 +271,12 @@ router.post('/extLogin',function(req,res){
 
 router.get('/list',isLoggedIn,function(req,res){
     var id = req.user.local.ExtId;
-    res.render('list',{data:data[id]});
+    console.log("User : \n\n",util.inspect(req.user));
+    console.log("Data : \n\n",util.inspect(data));
+    console.log("Data_ID : \n\n",util.inspect(data[id]));
+
+    console.log("\n\nRegion : \n\n",util.inspect(region));
+    res.render('list',{data:data[id],region:region,flight:flights[id]});
 });
 
 module.exports = router;
