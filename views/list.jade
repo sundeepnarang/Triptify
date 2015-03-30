@@ -2,76 +2,89 @@
    Created by Sundeep on 3/15/2015.
 
 extends layout
+block head
+    script.
+        function generate(id) {
+            var url = "http://triptify.co/add?id="+id;
+            $("input").each(function(i,d){
+                if($(d).is(':checked')) url = url + "&" + i + "=" + $(d).attr('name');
+            });
+            $("#url").text(url);
+        }
 
 block content
     if(data)
-        each value, key in data
-            h3 #{region[key.split("|")[0]]} &nbsp;
-                small &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ #{key.split("|")[1]} - #{key.split("|")[2]} ]
-                a.pull-right(href="#{'#'+key.replace(/\|/g,'').replace(/\//g,'')}" data-toggle="collapse" aria-expanded="false" aria-controls="collapseExample" ) [Show/Hide]
-            br
-            br
-            div(id="#{key.replace(/\|/g,'').replace(/\//g,'')}").collapse.in
-                table.table.table-striped
-                    thead
-                        tr
-                            th Hotel Id
-                            th Link
-                            th Picture
-                            th Name
-                            th Rating
-                            th Price
-                            th Select
-                    tbody
-                       for val in value
-                                    tr
-                                        td #{val.hotelId}
-                                        td
-                                            a(href="#{val.link}") Book
-                                        td
-                                            img(width=64, src="#{val.picture}")
-                                        td #{val.name}
-                                        td #{val.rating}
-                                        td #{val.price}
-                                        td
-                                            input(type="checkbox" name="#{key+'->'+val.hotelId}")
+        .row
+            each value, key in data
+                h3 #{region[key.split("|")[0]]} &nbsp;
+                    small &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ #{key.split("|")[1]} - #{key.split("|")[2]} ]
+                    a.pull-right(href="#{'#'+key.replace(/\|/g,'').replace(/\//g,'')}" data-toggle="collapse" aria-expanded="false" aria-controls="collapseExample" ) [Show/Hide]
                 br
-                hr
                 br
-    if(flight)
-        each value, key in flight
-            h3 #{key.split(":")[1].replace(",to","").replace(/\%20/g," ") + ' - '} &nbsp;
-                br
-                |#{key.split(":")[2].replace(",departure","").replace(/\%20/g," ")}
-                small &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ #{key.split(":")[3].substr(0,10)} ]
-                a.pull-right(href="#{'#'+key.replace(/\:/g,'').replace(/\//g,'').replace(/\%20|\,|\{|\}|\(|\)/g,'')}" data-toggle="collapse" aria-expanded="false" aria-controls="collapseExample" ) [Show/Hide]
-            br
-            br
-            div(id="#{key.replace(/\:/g,'').replace(/\//g,'').replace(/\%20|\,|\{|\}|\(|\)/g,'')}").collapse.in
-                table.table.table-striped
-                    thead
-                        tr
-                            th
-                            th Airline
-                            th Departure Time
-                            th Arrival Time
-                            th Duration
-                            th Price
-                            th Select
-                    tbody
-                        for val,k in value
+                div(id="#{key.replace(/\|/g,'').replace(/\//g,'')}").collapse.in
+                    table.table.table-striped
+                        thead
                             tr
-                                td
-                                    img(width=64, src="#{val.picture}")
-                                td #{val.airlineAb}
-                                td #{val.departure_time}
-                                td #{val.arrival_time}
-                                td #{val.duration}
-                                td #{val.price}
-                                td
-                                    input(type="checkbox" name="#{k+'->'+val.hotelId}")
+                                th Hotel Id
+                                th Link
+                                th Picture
+                                th Name
+                                th Rating
+                                th Price
+                                th Select
+                        tbody
+                           for val in value
+                                        tr
+                                            td #{val.hotelId}
+                                            td
+                                                a(href="#{val.link}") Book
+                                            td
+                                                img(width=64, src="#{val.picture}")
+                                            td #{val.name}
+                                            td #{val.rating}
+                                            td #{val.price}
+                                            td
+                                                input(type="checkbox" name="#{'data->'+key+'->'+val.hotelId}")
+                    br
+                    hr
+                    br
+    if(flight)
+        .row
+            each value, key in flight
+                h3 #{key.split(":")[1].replace(",to","").replace(/\%20/g," ") + ' - '} &nbsp;
+                    br
+                    |#{key.split(":")[2].replace(",departure","").replace(/\%20/g," ")}
+                    small &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ #{key.split(":")[3].substr(0,10)} ]
+                    a.pull-right(href="#{'#'+key.replace(/\:/g,'').replace(/\//g,'').replace(/\%20|\,|\{|\}|\(|\)/g,'')}" data-toggle="collapse" aria-expanded="false" aria-controls="collapseExample" ) [Show/Hide]
                 br
-                hr
                 br
-    else
-        h1 Nothing to Plan!
+                div(id="#{key.replace(/\:/g,'').replace(/\//g,'').replace(/\%20|\,|\{|\}|\(|\)/g,'')}").collapse.in
+                    table.table.table-striped
+                        thead
+                            tr
+                                th
+                                th Airline
+                                th Departure Time
+                                th Arrival Time
+                                th Duration
+                                th Price
+                                th Select
+                        tbody
+                            for val,k in value
+                                tr
+                                    td
+                                        img(width=64, src="#{val.picture}")
+                                    td #{val.airlineAb}
+                                    td #{val.departure_time}
+                                    td #{val.arrival_time}
+                                    td #{val.duration}
+                                    td #{val.price}
+                                    td
+                                        input(type="checkbox" name="#{'flights->'+key+'->'+k}")
+                    br
+                    hr
+                    br
+    .row
+        button.btn.btn-primary(onClick='generate("#{id}")') Generate Url
+        .well
+            #url

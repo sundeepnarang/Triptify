@@ -276,7 +276,39 @@ router.get('/list',isLoggedIn,function(req,res){
     console.log("Data_ID : \n\n",util.inspect(data[id]));
 
     console.log("\n\nRegion : \n\n",util.inspect(region));
-    res.render('list',{data:data[id],region:region,flight:flights[id]});
+    res.render('list',{data:data[id],region:region,flight:flights[id],id:id});
 });
+
+router.get('/add',isLoggedIn,function(req,res){
+    var id = req.user.local.ExtId;
+    var sharedId = req.query.id;
+    var items = req.query;
+    delete items.id;
+    if(sharedId){
+        for(key in items){
+            var info = items[key].split("->");
+            if(info[0]=="flights"){
+                if(!flights[id]){
+                    flights[id] = {};
+                }
+                if(!flights[id][info[1]]){
+                    flights[id][info[1]] = [];
+                }
+                flights[id][info[1]].push(flights[sharedId][info[1]][info[2]]);
+            }
+            if(info[0]=="data"){
+                if(!data[id]){
+                    data[id] = {};
+                }
+                if(!data[id][info[1]]){
+                    data[id][info[1]] = {};
+                }
+                data[id][info[1]][info[2]] = data[sharedId][info[1]][info[2]];
+            }
+        }
+    }
+    res.redirect('/list');
+});
+
 
 module.exports = router;
