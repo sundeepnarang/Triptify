@@ -236,6 +236,7 @@ router.post('/savef',function(req,res){
     }else{
         tripId = urlObject["leg"+(parseInt(urlObject.leg)+1)];
     }
+    tripId = tripId.replace(/\%20/g,"");
     if(!flights[id][tripId]){
         flights[id][tripId] = [];
     }
